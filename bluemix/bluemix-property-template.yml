@@ -9,6 +9,7 @@ cfdeploymentname: stage0
 azname: lon02
 vmtype: coreNode
 networksname: default
+dbpassword: password
 nats:
   address: 0.nats.default.stage0.microbosh
   port: 4222
