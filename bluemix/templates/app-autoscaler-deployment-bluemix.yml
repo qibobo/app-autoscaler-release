@@ -563,3 +563,21 @@ variables:
     common_name: scheduler client
     extended_key_usage:
     - client_auth
+cf_properties_template: (( grab cf_properties ))
+api_server_properties_template: (( grab api_server_properties ))
+scheduler_properties_template: (( grab scheduler_properties ))
+service_broker_properties_template: (( grab service_broker_properties ))
+config_from_cf_template: (( grab config_from_cf ))
+pruner_properties_template: ((grab pruner_properties ))
+metricscollector_properties_template: (( grab metricscollector_properties ))
+eventgenerator_properties_template: (( grab eventgenerator_properties ))
+scalingengine_properties_template: (( grab scalingengine_properties ))
+default_db_template: (( grab default_db ))
+instance_count_overrides_template: (( grab instance_count_overrides || nil))
+database: (( grab default_db ))
+policydb: (( grab database ))
+schedulerdb: (( grab database ))
+scalingenginedb: (( grab database ))
+appmetricsdb: (( grab database ))
+instancemetricsdb: (( grab database ))
+bindingdb: (( grab database ))
