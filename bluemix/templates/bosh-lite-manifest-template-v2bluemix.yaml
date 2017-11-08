@@ -1,0 +1,382 @@
+---
+
+director_uuid: "director_uuid"
+
+name: app-autoscaler-release
+
+## Release Details ###
+releases:
+  - name: app-autoscaler
+    version: latest
+  - name: postgres
+    url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=17
+    version: '17'
+    sha1: b062e32a5409ccd4e4161337c48705c793a58412
+  - name: (( grab cfreleasename ))
+    version: latest
+  - name: routing
+    url: https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.162.0
+    sha1: f17cf09d2414f5f486d18bbd57b17fd48fb69773
+    version: '0.162.0'
+
+## Stemcell details ##
+stemcells:
+  - alias: default
+    os: ubuntu-trusty
+    version: latest
+
+## Canary details ##
+update:
+  canaries: 1
+  canary_watch_time: 1000-300000
+  max_in_flight: 3
+  update_watch_time: 1000-300000
+
+## Instance Group details ##
+
+instance_groups:
+
+# Postgres Instance Group
+
+  - name: postgres
+    azs:
+      - (( grab azname ))
+    instances: (( grab instance_count_overrides_template.postgres.instances || 1 ))
+    update:
+      serial: true
+    stemcell: default
+    vm_type: (( grab vmtype ))
+    networks:
+      - name: (( grab networksname ))
+    jobs:
+      - name: consul_agent
+        release: (( grab cfreleasename ))
+        consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
+        properties:
+          consul:
+            agent:
+              mode: client
+              domain: cf.internal
+              services:
+                postgres:
+                  check:
+                    tcp: 127.0.0.1:5432
+                    interval: 30s
+                    timeout: 10s
+              servers:
+                lan: (( grab config_from_cf_template.consul.lan_servers ))
+            ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+            agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+            agent_key: (( grab config_from_cf_template.consul.agent_key ))
+            server_cert: (( grab config_from_cf_template.consul.server_cert ))
+            server_key: (( grab config_from_cf_template.consul.server_key ))
+            encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
+      - name: postgres
+        properties:
+          databases: (( grab default_db_template ))
+        release: postgres
+
+ # APIServer Instance Group
+  
+  - name: apiserver
+    azs:
+      - (( grab azname ))
+    instances: 1
+    networks:
+      - name: (( grab networksname ))
+    stemcell: default
+    vm_type: (( grab vmtype ))
+    jobs:
+      - name: consul_agent
+        release: (( grab cfreleasename ))
+        consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
+        properties:
+          consul:
+            agent:
+              mode: client
+              domain: cf.internal
+              services:
+                apiserver: {}
+              servers: 
+                lan: (( grab config_from_cf_template.consul.lan_servers ))
+            ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+            agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+            agent_key: (( grab config_from_cf_template.consul.agent_key ))
+            server_cert: (( grab config_from_cf_template.consul.server_cert ))
+            server_key: (( grab config_from_cf_template.consul.server_key ))
+            encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
+      - name: apiserver
+        properties:
+          api_server: (( grab api_server_properties_template ))
+          policy_db: (( grab policydb ))
+          cf: 
+            api: (( grab cf_properties_template.api ))
+        release: app-autoscaler
+      - name: route_registrar
+        release: routing
+        consumes:
+          nats: 
+            instances:
+            - address: (( grab nats.address ))
+            properties:
+              nats:
+                port: (( grab nats.port ))
+                user: (( grab nats.user))
+                password: (( grab nats.password ))
+        properties:
+          route_registrar:
+            routes:
+            - name: api_server_public_api
+              registration_interval: 20s
+              port: (( grab api_server_properties_template.publicPort))
+              tags:
+                component: api_server
+              uris:
+                - (( concat "autoscaler." domain ))
+# Scheduler Instance Group
+
+  - name: scheduler
+    azs:
+      - (( grab azname ))
+    instances: 1
+    networks:
+      - name: (( grab networksname ))
+    stemcell: default
+    vm_type: (( grab vmtype ))
+    jobs:
+      - name: consul_agent
+        release: (( grab cfreleasename ))
+        consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
+        properties:
+          consul:
+            agent:
+              mode: client
+              domain: cf.internal
+              servers:
+                lan: (( grab config_from_cf_template.consul.lan_servers ))
+            ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+            agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+            agent_key: (( grab config_from_cf_template.consul.agent_key ))
+            server_cert: (( grab config_from_cf_template.consul.server_cert ))
+            server_key: (( grab config_from_cf_template.consul.server_key ))
+            encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
+      - name: scheduler
+        properties:
+          scheduler: (( grab scheduler_properties_template ))
+          scheduler_db: (( grab schedulerdb ))
+          policy_db: (( grab policydb ))
+        release: app-autoscaler
+
+# Service-Broker Instance Group
+
+  - name: servicebroker
+    azs:
+      - (( grab azname ))
+    instances: 1
+    networks:
+      - name: (( grab networksname ))
+    stemcell: default
+    vm_type: (( grab vmtype ))
+    jobs:
+      - name: consul_agent
+        release: (( grab cfreleasename ))
+        consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
+        properties:
+          consul:
+            agent:
+              mode: client
+              domain: cf.internal
+              servers: 
+                lan: (( grab config_from_cf_template.consul.lan_servers ))
+            ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+            agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+            agent_key: (( grab config_from_cf_template.consul.agent_key ))
+            server_cert: (( grab config_from_cf_template.consul.server_cert ))
+            server_key: (( grab config_from_cf_template.consul.server_key ))
+            encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
+      - name: servicebroker
+        properties:
+          service_broker: (( grab service_broker_properties_template ))
+          binding_db: (( grab bindingdb ))
+        release: app-autoscaler
+      - name: route_registrar
+        release: routing
+        consumes:
+          nats: 
+            instances:
+            - address: (( grab nats.address ))
+            properties:
+              nats:
+                port: (( grab nats.port ))
+                user: (( grab nats.user))
+                password: (( grab nats.password ))
+        properties:
+          route_registrar:
+            routes:
+            - name: autoscaler_service_broker
+              registration_interval: 20s
+              port: (( grab service_broker_properties_template.port ))
+              tags:
+                component: autoscaler_service_broker
+              uris:
+                - (( concat "autoscalerservicebroker." domain ))
+
+# Pruner Instance Group
+
+  - name: pruner
+    azs:
+      - (( grab azname ))
+    instances: 1
+    networks:
+      - name: (( grab networksname ))
+    stemcell: default
+    vm_type: (( grab vmtype ))
+    jobs:
+      - name: consul_agent
+        release: (( grab cfreleasename ))
+        consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
+        properties:
+          consul:
+            agent:
+              mode: client
+              domain: cf.internal
+              servers: 
+                lan: (( grab config_from_cf_template.consul.lan_servers ))
+            ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+            agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+            agent_key: (( grab config_from_cf_template.consul.agent_key ))
+            server_cert: (( grab config_from_cf_template.consul.server_cert ))
+            server_key: (( grab config_from_cf_template.consul.server_key ))
+            encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
+      - name: pruner
+        properties:
+          appmetrics_db: (( grab appmetricsdb ))
+          instancemetrics_db: (( grab instancemetricsdb ))
+          scalingengine_db: (( grab scalingenginedb ))
+          pruner: (( grab pruner_properties_template ))
+        release: app-autoscaler
+
+# Metric-collector Instance Group
+
+  - name: metricscollector
+    azs:
+      - (( grab azname ))
+    instances: 1
+    networks:
+      - name: (( grab networksname ))
+    stemcell: default
+    vm_type: (( grab vmtype ))
+    jobs:
+      - name: consul_agent
+        release: (( grab cfreleasename ))
+        consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
+        properties:
+          consul:
+            agent:
+              mode: client
+              domain: cf.internal
+              servers: 
+                lan: (( grab config_from_cf_template.consul.lan_servers ))
+            ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+            agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+            agent_key: (( grab config_from_cf_template.consul.agent_key ))
+            server_cert: (( grab config_from_cf_template.consul.server_cert ))
+            server_key: (( grab config_from_cf_template.consul.server_key ))
+            encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
+      - name: metricscollector
+        properties:
+          instancemetrics_db: (( grab instancemetricsdb ))
+          policy_db: (( grab policydb ))
+          cf: (( grab cf_properties_template ))
+          metricscollector: (( grab metricscollector_properties_template ))
+        release: app-autoscaler
+
+# Event-Generator Instance Group
+
+  - name: eventgenerator
+    azs:
+      - (( grab azname ))
+    instances: 1
+    networks:
+      - name: (( grab networksname ))
+    stemcell: default
+    vm_type: (( grab vmtype ))
+    jobs:
+      - name: consul_agent
+        release: (( grab cfreleasename ))
+        consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
+        properties:
+          consul:
+            agent:
+              mode: client
+              domain: cf.internal
+              servers:
+                lan: (( grab config_from_cf_template.consul.lan_servers ))
+            ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+            agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+            agent_key: (( grab config_from_cf_template.consul.agent_key ))
+            server_cert: (( grab config_from_cf_template.consul.server_cert ))
+            server_key: (( grab config_from_cf_template.consul.server_key ))
+            encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
+      - name: eventgenerator
+        properties:
+          appmetrics_db: (( grab appmetricsdb ))
+          policy_db: (( grab policydb ))
+          eventgenerator: (( grab eventgenerator_properties_template ))
+        release: app-autoscaler
+
+# Scaling-Engine Instance Group
+
+  - name: scalingengine
+    azs:
+      - (( grab azname ))
+    instances: 1
+    networks:
+      - name: (( grab networksname ))
+    stemcell: default
+    vm_type: (( grab vmtype ))
+    jobs:
+      - name: consul_agent
+        release: (( grab cfreleasename ))
+        consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
+        properties:
+          consul:
+            agent:
+              mode: client
+              domain: cf.internal
+              servers:
+                lan: (( grab config_from_cf_template.consul.lan_servers ))
+            ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+            agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+            agent_key: (( grab config_from_cf_template.consul.agent_key ))
+            server_cert: (( grab config_from_cf_template.consul.server_cert ))
+            server_key: (( grab config_from_cf_template.consul.server_key ))
+            encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
+      - name: scalingengine
+        properties:
+          scalingengine_db: (( grab scalingenginedb ))
+          scheduler_db: (( grab schedulerdb ))
+          policy_db: (( grab policydb ))
+          cf: (( grab cf_properties_template ))
+          scalingengine: (( grab scalingengine_properties_template ))
+        release: app-autoscaler
+
+cf_properties_template: (( grab cf_properties ))
+api_server_properties_template: (( grab api_server_properties ))
+scheduler_properties_template: (( grab scheduler_properties ))
+service_broker_properties_template: (( grab service_broker_properties ))
+config_from_cf_template: (( grab config_from_cf ))
+pruner_properties_template: ((grab pruner_properties ))
+metricscollector_properties_template: (( grab metricscollector_properties ))
+eventgenerator_properties_template: (( grab eventgenerator_properties ))
+scalingengine_properties_template: (( grab scalingengine_properties ))
+default_db_template: (( grab default_db ))
+instance_count_overrides_template: (( grab instance_count_overrides || nil))
+database: (( grab default_db ))
+policydb: (( grab database ))
+schedulerdb: (( grab database ))
+scalingenginedb: (( grab database ))
+appmetricsdb: (( grab database ))
+instancemetricsdb: (( grab database ))
+bindingdb: (( grab database ))
+

@@ -1,0 +1,27 @@
+config_from_cf:
+  consul:
+    domain: (( grab properties.consul.agent.domain ))
+    log_level: (( grab properties.consul.agent.log_level ))
+    lan_servers: (( grab properties.consul.agent.servers.lan ))
+    ca_cert: (( grab properties.consul.ca_cert ))
+    agent_cert: (( grab properties.consul.agent_cert ))
+    agent_key: (( grab properties.consul.agent_key ))
+    encrypt_keys: (( grab properties.consul.encrypt_keys ))
+    require_ssl: (( grab properties.consul.require_ssl ))
+    server_cert: (( grab properties.consul.server_cert ))
+    server_key: (( grab properties.consul.server_key ))
+
+properties:
+  consul:
+    agent:
+      domain: 
+      log_level: 
+      servers:
+        lan: 
+    ca_cert:
+    agent_cert:
+    agent_key:
+    encrypt_keys:
+    require_ssl:
+    server_cert:
+    server_key:

@@ -1,0 +1,16 @@
+---
+domain: stage0.eu-gb.bluemix.net
+cfusername: ibmadmin@us.ibm.com
+cfpassword: xxx
+clientid: admin
+clientsecrect: xxx
+cfreleasename: ibm-cf
+cfdeploymentname: stage0
+azname: lon02
+vmtype: coreNode
+networksname: default
+nats:
+  address: 0.nats.default.stage0.microbosh
+  port: 4222
+  user: nats
+  password: xxx
