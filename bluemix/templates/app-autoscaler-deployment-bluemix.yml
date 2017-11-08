@@ -11,7 +11,9 @@ releases:
   version: '17'
   sha1: b062e32a5409ccd4e4161337c48705c793a58412
 - name: consul
-  version: latest
+  sha1: 7a3dcd5a85fdedc8233b2e68b8aa9d97c46c3611
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/consul-release?v=190
+  version: 190
 - name: routing
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.162.0
   sha1: f17cf09d2414f5f486d18bbd57b17fd48fb69773
@@ -35,7 +37,7 @@ instance_groups:
   # Postgres Instance Group
 - name: postgres_autoscaler
   azs:
-  - z1
+  - (( grab azname))
   instances: 1
   update:
     serial: true
@@ -45,7 +47,7 @@ instance_groups:
   - name: (( grab networksname))
   jobs:
   - name: consul_agent
-    release: (( grab cfreleasename ))
+    release: consul
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
@@ -76,7 +78,7 @@ instance_groups:
 # APIServer Instance Group
 - name: apiserver
   azs:
-  - z1
+  - (( grab azname))
   instances: 1
   networks:
   - name: (( grab networksname))
@@ -84,7 +86,7 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: (( grab cfreleasename ))
+    release: consul
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
@@ -150,7 +152,7 @@ instance_groups:
 # Scheduler Instance Group
 - name: scheduler_autoscaler
   azs:
-  - z1
+  - (( grab azname))
   instances: 1
   networks:
   - name: (( grab networksname))
@@ -158,7 +160,7 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: (( grab cfreleasename ))
+    release: consul
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
@@ -184,7 +186,7 @@ instance_groups:
 # Service-Broker Instance Group
 - name: servicebroker
   azs:
-  - z1
+  - (( grab azname))
   instances: 1
   networks:
   - name: (( grab networksname))
@@ -192,7 +194,7 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: (( grab cfreleasename ))
+    release: consul
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
@@ -250,7 +252,7 @@ instance_groups:
 # Pruner Instance Group
 - name: pruner
   azs:
-  - z1
+  - (( grab azname))
   instances: 1
   networks:
   - name: (( grab networksname))
@@ -258,7 +260,7 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: (( grab cfreleasename ))
+    release: consul
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
@@ -276,7 +278,7 @@ instance_groups:
 # Metric-collector Instance Group
 - name: metricscollector
   azs:
-  - z1
+  - (( grab azname))
   instances: 1
   networks:
   - name: (( grab networksname))
@@ -284,7 +286,7 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: (( grab cfreleasename ))
+    release: consul
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
@@ -313,7 +315,7 @@ instance_groups:
 # Event-Generator Instance Group
 - name: eventgenerator
   azs:
-  - z1
+  - (( grab azname))
   instances: 1
   networks:
   - name: (( grab networksname))
@@ -321,7 +323,7 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: (( grab cfreleasename ))
+    release: consul
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
@@ -348,7 +350,7 @@ instance_groups:
 # Scaling-Engine Instance Group
 - name: scalingengine
   azs:
-  - z1
+  - (( grab azname))
   instances: 1
   networks:
   - name: (( grab networksname))
@@ -356,7 +358,7 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: (( grab cfreleasename ))
+    release: consul
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
