@@ -455,8 +455,8 @@ instance_groups:
           cluster: http://127.0.0.1:8500
 
 variables:
-- name: database_password
-  type: password
+# - name: database_password
+#   type: password
 - name: scalingengine_ca
   type: certificate
   options:
