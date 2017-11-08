@@ -10,10 +10,8 @@ releases:
   url: https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=17
   version: '17'
   sha1: b062e32a5409ccd4e4161337c48705c793a58412
-- name: consul
-  sha1: 7a3dcd5a85fdedc8233b2e68b8aa9d97c46c3611
-  url: https://bosh.io/d/github.com/cloudfoundry-incubator/consul-release?v=190
-  version: 190
+- name: (( grab cfreleasename ))
+  version: latest
 - name: routing
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.162.0
   sha1: f17cf09d2414f5f486d18bbd57b17fd48fb69773
@@ -47,20 +45,27 @@ instance_groups:
   - name: (( grab networksname))
   jobs:
   - name: consul_agent
-    release: consul
-    consumes:
-      consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
-      consul_server: nil
-      consul_client: {from: consul_client_link, deployment: (( grab cfdeploymentname ))}
+    release: (( grab cfreleasename ))
+    consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
     properties:
       consul:
         agent:
+          mode: client
+          domain: cf.internal
           services:
             postgres:
               check:
                 tcp: 127.0.0.1:5432
                 interval: 30s
                 timeout: 10s
+          servers:
+            lan: (( grab config_from_cf_template.consul.lan_servers ))
+        ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+        agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+        agent_key: (( grab config_from_cf_template.consul.agent_key ))
+        server_cert: (( grab config_from_cf_template.consul.server_cert ))
+        server_key: (( grab config_from_cf_template.consul.server_key ))
+        encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
   - name: postgres
     release: postgres
     properties:
@@ -86,16 +91,23 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: consul
-    consumes:
-      consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
-      consul_server: nil
-      consul_client: {from: consul_client_link, deployment: (( grab cfdeploymentname ))}
+    release: (( grab cfreleasename ))
+    consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
     properties:
       consul:
         agent:
+          mode: client
+          domain: cf.internal
           services:
             apiserver: {}
+          servers: 
+            lan: (( grab config_from_cf_template.consul.lan_servers ))
+        ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+        agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+        agent_key: (( grab config_from_cf_template.consul.agent_key ))
+        server_cert: (( grab config_from_cf_template.consul.server_cert ))
+        server_key: (( grab config_from_cf_template.consul.server_key ))
+        encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
   - name: apiserver
     release: app-autoscaler
     properties:
@@ -160,11 +172,21 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: consul
-    consumes:
-      consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
-      consul_server: nil
-      consul_client: {from: consul_client_link, deployment: (( grab cfdeploymentname ))}
+    release: (( grab cfreleasename ))
+    consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
+    properties:
+      consul:
+        agent:
+          mode: client
+          domain: cf.internal
+          servers:
+            lan: (( grab config_from_cf_template.consul.lan_servers ))
+        ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+        agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+        agent_key: (( grab config_from_cf_template.consul.agent_key ))
+        server_cert: (( grab config_from_cf_template.consul.server_cert ))
+        server_key: (( grab config_from_cf_template.consul.server_key ))
+        encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
   - name: scheduler
     release: app-autoscaler
     properties:
@@ -194,11 +216,21 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: consul
-    consumes:
-      consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
-      consul_server: nil
-      consul_client: {from: consul_client_link, deployment: (( grab cfdeploymentname ))}
+    release: (( grab cfreleasename ))
+    consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
+    properties:
+      consul:
+        agent:
+          mode: client
+          domain: cf.internal
+          servers: 
+            lan: (( grab config_from_cf_template.consul.lan_servers ))
+        ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+        agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+        agent_key: (( grab config_from_cf_template.consul.agent_key ))
+        server_cert: (( grab config_from_cf_template.consul.server_cert ))
+        server_key: (( grab config_from_cf_template.consul.server_key ))
+        encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
   - name: servicebroker
     release: app-autoscaler
     properties:
@@ -260,11 +292,21 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: consul
-    consumes:
-      consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
-      consul_server: nil
-      consul_client: {from: consul_client_link, deployment: (( grab cfdeploymentname ))}
+    release: (( grab cfreleasename ))
+    consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
+    properties:
+      consul:
+        agent:
+          mode: client
+          domain: cf.internal
+          servers: 
+            lan: (( grab config_from_cf_template.consul.lan_servers ))
+        ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+        agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+        agent_key: (( grab config_from_cf_template.consul.agent_key ))
+        server_cert: (( grab config_from_cf_template.consul.server_cert ))
+        server_key: (( grab config_from_cf_template.consul.server_key ))
+        encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
   - name: pruner
     release: app-autoscaler
     properties:
@@ -286,11 +328,21 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: consul
-    consumes:
-      consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
-      consul_server: nil
-      consul_client: {from: consul_client_link, deployment: (( grab cfdeploymentname ))}
+    release: (( grab cfreleasename ))
+    consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
+    properties:
+      consul:
+        agent:
+          mode: client
+          domain: cf.internal
+          servers: 
+            lan: (( grab config_from_cf_template.consul.lan_servers ))
+        ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+        agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+        agent_key: (( grab config_from_cf_template.consul.agent_key ))
+        server_cert: (( grab config_from_cf_template.consul.server_cert ))
+        server_key: (( grab config_from_cf_template.consul.server_key ))
+        encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
   - name: metricscollector
     release: app-autoscaler
     properties:
@@ -323,11 +375,21 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: consul
-    consumes:
-      consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
-      consul_server: nil
-      consul_client: {from: consul_client_link, deployment: (( grab cfdeploymentname ))}
+    release: (( grab cfreleasename ))
+    consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
+    properties:
+      consul:
+        agent:
+          mode: client
+          domain: cf.internal
+          servers:
+            lan: (( grab config_from_cf_template.consul.lan_servers ))
+        ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+        agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+        agent_key: (( grab config_from_cf_template.consul.agent_key ))
+        server_cert: (( grab config_from_cf_template.consul.server_cert ))
+        server_key: (( grab config_from_cf_template.consul.server_key ))
+        encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
   - name: eventgenerator
     release: app-autoscaler
     properties:
@@ -358,11 +420,21 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: consul
-    consumes:
-      consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
-      consul_server: nil
-      consul_client: {from: consul_client_link, deployment: (( grab cfdeploymentname ))}
+    release: (( grab cfreleasename ))
+    consumes: {consul_client: nil, consul_server: nil, consul_common: nil}
+    properties:
+      consul:
+        agent:
+          mode: client
+          domain: cf.internal
+          servers:
+            lan: (( grab config_from_cf_template.consul.lan_servers ))
+        ca_cert: (( grab config_from_cf_template.consul.ca_cert ))
+        agent_cert: (( grab config_from_cf_template.consul.agent_cert ))
+        agent_key: (( grab config_from_cf_template.consul.agent_key ))
+        server_cert: (( grab config_from_cf_template.consul.server_cert ))
+        server_key: (( grab config_from_cf_template.consul.server_key ))
+        encrypt_keys: (( grab config_from_cf_template.consul.encrypt_keys ))
   - name: scalingengine
     release: app-autoscaler
     properties:

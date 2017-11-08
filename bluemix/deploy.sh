@@ -11,4 +11,10 @@ bosh create release --force --name app-autoscaler --with-tarball ./autoscaler.tg
 bosh2 upload-release /tmp/app-autoscaler-release/dev_releases/app-autoscaler/app-autoscaler-0+dev.88.tgz 
 bosh2 -d app-autoscaler-release deploy autoscaler-final.yml
 
+
+spruce merge ./bluemix/templates/app-autoscaler-deployment-bluemix.yml ./bluemix/bluemix-property-template.yml > autoscaler-deployment.yml
+bosh2 create-release --force
+bosh2 upload-release --rebase
+bosh2 -d app-autoscaler deploy autoscaler-deployment.yml 
+
 spruce merge ./bluemix/templates/app-autoscaler-deployment-bluemix.yml ./bluemix/bluemix-property-template.yml > autoscaler-deployment.yml
