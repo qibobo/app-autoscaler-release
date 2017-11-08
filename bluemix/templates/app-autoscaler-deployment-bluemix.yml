@@ -45,7 +45,7 @@ instance_groups:
   - name: (( grab networksname))
   jobs:
   - name: consul_agent
-    release: consul
+    release: (( grab cfreleasename ))
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
@@ -84,7 +84,7 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: consul
+    release: (( grab cfreleasename ))
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
@@ -158,7 +158,7 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: consul
+    release: (( grab cfreleasename ))
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
@@ -192,7 +192,7 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: consul
+    release: (( grab cfreleasename ))
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
@@ -258,7 +258,7 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: consul
+    release: (( grab cfreleasename ))
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
@@ -284,7 +284,7 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: consul
+    release: (( grab cfreleasename ))
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
@@ -321,7 +321,7 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: consul
+    release: (( grab cfreleasename ))
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
@@ -356,7 +356,7 @@ instance_groups:
   vm_type: (( grab vmtype))
   jobs:
   - name: consul_agent
-    release: consul
+    release: (( grab cfreleasename ))
     consumes:
       consul_common: {from: consul_common_link, deployment: (( grab cfdeploymentname ))}
       consul_server: nil
