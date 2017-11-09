@@ -351,7 +351,7 @@ instance_groups:
       cf: &cf_credentials
         api: (( concat "https://api." domain ))
         grant_type: password
-        username: admin
+        username: (( grab cfusername))
         password: "(( grab cfpassword))"
         client_id: admin
         secret: "(( grab clientsecrect))"
