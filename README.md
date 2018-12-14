@@ -104,6 +104,22 @@ bosh -e YOUR_ENV -d app-autoscaler \
      -v database_name=<database_name> \
      -o example/operation/external-db.yml
 ```
+For density deployment
+```sh
+bosh -e YOUR_ENV -d app-autoscaler \
+     deploy templates/app-autoscaler-deployment-fewer.yml \
+     --vars-store=bosh-lite/deployments/vars/autoscaler-deployment-vars.yml \
+     -v system_domain=bosh-lite.com \
+     -v cf_client_id=autoscaler_client_id \
+     -v cf_client_secret=autoscaler_client_secret \
+     -v skip_ssl_validation=true \
+     -v database_host=<database_host> \
+     -v database_port=<database_port> \
+     -v database_username=<database_username> \
+     -v database_password=<database_password> \
+     -v database_name=<database_name> \
+     -o example/operation/external-db-fewer.yml
+```
 
 #### Deploy autoscaler with bosh-dns instead of consul for service registration
 
