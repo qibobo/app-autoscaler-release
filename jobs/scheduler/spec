@@ -75,7 +75,7 @@ properties:
   autoscaler.scheduler_db.tls.ca:
   autoscaler.scheduler_db.sslmode:
     default: disable
-    description: "Whether or not to use SSL"
+    description: "sslmode to connect to postgres server"
 
   autoscaler.policy_db.address:
     description: "IP address on which the policydb server will listen"
@@ -91,7 +91,7 @@ properties:
   autoscaler.policy_db.tls.ca:
   autoscaler.policy_db.sslmode:
     default: disable
-    description: "Whether or not to use SSL"
+    description: "sslmode to connect to postgres server"
 
   autoscaler.scheduler.health.port:
     description: "the listening port of health endpoint"

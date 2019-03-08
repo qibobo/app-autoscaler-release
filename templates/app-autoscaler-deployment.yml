@@ -76,15 +76,6 @@ instance_groups:
           max_open_connections: 100
           max_idle_connections: 10
           connection_max_lifetime: 60s
-        sslmode: "verify-full"
-        tls:
-          ca: ((postgres_ca.ca))
-          certificate: ((postgres_server.certificate))
-          private_key: ((postgres_server.private_key))
-        # client_tls:
-        #   ca: ((postgres.ca))
-        #   certificate: ((postgres_client.certificate))
-        #   private_key: ((postgres_client.private_key))
 
 # APIServer Instance Group
 - name: apiserver
@@ -669,23 +660,3 @@ variables:
     extended_key_usage:
     - client_auth
 
-- name: postgres_ca
-  type: certificate
-  options:
-    is_ca: true
-    common_name: postgresCA
-- name: postgres_server
-  type: certificate
-  options:
-    ca: postgres_ca
-    common_name: postgres.service.cf.internal
-    extended_key_usage:
-    - client_auth
-    - server_auth
-- name: postgres_client
-  type: certificate
-  options:
-    ca: postgres_ca
-    common_name: postgres client
-    extended_key_usage:
-    - client_auth

@@ -93,7 +93,7 @@ properties:
   autoscaler.binding_db.tls.ca:
   autoscaler.binding_db.sslmode:
     default: disable
-    description: "Whether or not to use SSL"
+    description: "sslmode to connect to postgres server"
   autoscaler.service_broker.catalog:
     description: "The service broker catalog"
     default:

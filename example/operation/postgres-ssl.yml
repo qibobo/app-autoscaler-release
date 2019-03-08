@@ -1,0 +1,29 @@
+- type: replace
+  path: /instance_groups/name=postgres_autoscaler/jobs/name=postgres/properties/databases/sslmode?
+  value: "verify-full"
+- type: replace
+  path: /instance_groups/name=postgres_autoscaler/jobs/name=postgres/properties/databases/tls?
+  value:
+    ca: ((postgres_ca.ca))
+    certificate: ((postgres_server.certificate))
+    private_key: ((postgres_server.private_key))
+
+- type: replace
+  path: /variables/-
+  value:
+    name: postgres_ca
+    type: certificate
+    options:
+      is_ca: true
+      common_name: postgresCA
+- type: replace
+  path: /variables/-
+  value:
+    name: postgres_server
+    type: certificate
+    options:
+      ca: postgres_ca
+      common_name: postgres.service.cf.internal
+      extended_key_usage:
+      - client_auth
+      - server_auth

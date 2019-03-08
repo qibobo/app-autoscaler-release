@@ -36,7 +36,7 @@ properties:
   autoscaler.scalingengine_db.tls.ca:
   autoscaler.scalingengine_db.sslmode:
     default: disable
-    description: "Whether or not to use SSL"
+    description: "sslmode to connect to postgres server"
 
   autoscaler.policy_db.address:
     description: "IP address on which the policydb server will listen"
@@ -52,7 +52,7 @@ properties:
   autoscaler.policy_db.tls.ca:
   autoscaler.policy_db.sslmode:
     default: disable
-    description: "Whether or not to use SSL"
+    description: "sslmode to connect to postgres server"
 
   autoscaler.scheduler_db.address:
     description: "IP address on which the schedulerdb server will listen"
@@ -68,7 +68,7 @@ properties:
   autoscaler.scheduler_db.tls.ca:
   autoscaler.scheduler_db.sslmode:
     default: disable
-    description: "Whether or not to use SSL"
+    description: "sslmode to connect to postgres server"
   
   autoscaler.scheduler_db_connection_config.max_open_connections:
     default: 100

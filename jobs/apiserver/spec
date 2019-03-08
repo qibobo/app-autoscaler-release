@@ -171,9 +171,10 @@ properties:
   autoscaler.policy_db.roles:
     description: "The list of database roles used in policydb database including name/password"
   autoscaler.policy_db.tls.ca:
+    default: "PEM-encoded CA certificate"
   autoscaler.policy_db.sslmode:
     default: disable
-    description: "Whether or not to use SSL"
+    description: "sslmode to connect to postgres server"
 
   autoscaler.api_server.hooks.pre_start:
     description: "Script to run before starting api_server"
