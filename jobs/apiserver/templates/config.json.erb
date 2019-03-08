@@ -33,7 +33,7 @@
        'maxConnections' => p('autoscaler.api_server.db_config.max_connections'),
        'minConnections' => p('autoscaler.api_server.db_config.min_connections'),
        'idleTimeout' => p('autoscaler.api_server.db_config.idle_timeout'),
-       'uri' => db_scheme + "://" + role['name'] + ":" + role['password'] + "@" + address + ":" + db_port.to_s + "/" + database['name']  ,
+       'uri' => db_scheme + "://" + role['name'] + ":" + role['password'] + "@" + address + ":" + db_port.to_s + "/" + database['name'] + "?sslmode=" + p('autoscaler.policy_db.sslmode') + "&sslrootcert=/var/vcap/jobs/apiserver/config/certs/policy_db/ca.crt"  ,
      },
     'scheduler' => {
        'uri' => "https://" + scheduler_host + ":" + scheduler_port.to_s,
