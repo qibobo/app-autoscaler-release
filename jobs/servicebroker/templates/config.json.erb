@@ -21,7 +21,7 @@
        'maxConnections' => p('autoscaler.service_broker.db_config.max_connections'),
        'minConnections' => p('autoscaler.service_broker.db_config.min_connections'),
        'idleTimeout' => p('autoscaler.service_broker.db_config.idle_timeout'),
-       'uri' => db_scheme + "://" + role['name'] + ":" + role['password'] + "@" + address + ":" + db_port.to_s + "/" + database['name']  ,
+       'uri' => db_scheme + "://" + role['name'] + ":" + role['password'] + "@" + address + ":" + db_port.to_s + "/" + database['name'] + "?sslmode=" + p('autoscaler.binding_db.sslmode') + "&sslrootcert=/var/vcap/jobs/servicebroker/config/certs/binding_db/ca.crt"  ,
      },
     'apiserver' => {
         'uri' => "https://" + apiserver_host + ":"+ apiserver_port.to_s,

@@ -32,9 +32,10 @@ DBNAME='<%= database['name'] %>'
 USER='<%= role['name'] %>'
 PASSWORD='<%= role['password'] %>'
 PORT='<%= p("autoscaler.lock_db.port") %>'
-
+SSLMODE='<%= p("autoscaler.lock_db.sslmode") %>'
+SSLROOTCERT='<%= p("autoscaler.lock_db.tls.ca") %>'
 detect_dns $HOST $PORT
 
-java -cp "$DB_DIR/target/lib/*" liquibase.integration.commandline.Main --url jdbc:postgresql://$HOST:$PORT/$DBNAME --username=$USER --password=$PASSWORD \
+java -cp "$DB_DIR/target/lib/*" liquibase.integration.commandline.Main --url "jdbc:postgresql://$HOST:$PORT/$DBNAME?sslmode=$SSLMODE&sslrootcert=$SSLROOTCERT" --username=$USER --password=$PASSWORD \
 --driver=org.postgresql.Driver --changeLogFile=$operator_DIR/operator.db.changelog.yml update
 

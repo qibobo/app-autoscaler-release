@@ -27,9 +27,11 @@ DBNAME='<%= database['name'] %>'
 USER='<%= role['name'] %>'
 PASSWORD='<%= role['password'] %>'
 PORT='<%= p("autoscaler.appmetrics_db.port") %>'
+SSLMODE='<%= p("autoscaler.appmetrics_db.sslmode") %>'
+SSLROOTCERT='<%= p("autoscaler.appmetrics_db.tls.ca") %>'
 
 detect_dns $HOST $PORT
 
-java -cp "/var/vcap/packages/db/target/lib/*" liquibase.integration.commandline.Main --url jdbc:postgresql://$HOST:$PORT/$DBNAME --username=$USER --password=$PASSWORD \
+java -cp "/var/vcap/packages/db/target/lib/*" liquibase.integration.commandline.Main --url "jdbc:postgresql://$HOST:$PORT/$DBNAME?sslmode=$SSLMODE&sslrootcert=$SSLROOTCERT" --username=$USER --password=$PASSWORD \
 --driver=org.postgresql.Driver --changeLogFile=/var/vcap/packages/eventgenerator/dataaggregator.db.changelog.yml update
 
