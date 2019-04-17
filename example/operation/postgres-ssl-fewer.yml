@@ -141,6 +141,7 @@
   value: *sslmode
 - type: replace
   path: /instance_groups/name=asapi/jobs/name=servicebroker/properties/autoscaler/binding_db/tls?
+  value: *database_tls
 
 
 
