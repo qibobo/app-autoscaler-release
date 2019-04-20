@@ -8,7 +8,10 @@
   scaling_engine_db_port = p('autoscaler.scalingengine_db.port')
   scaling_engine_db_role = p_arr('autoscaler.scalingengine_db.roles').find { |role| role['tag'] == 'scalingenginedb' or role['tag'] == 'default' } 
   scaling_engine_db_database = p_arr('autoscaler.scalingengine_db.databases').find { |database| database['tag'] == 'scalingenginedb' or database['tag'] == 'default' } 
-  scaling_engine_db_url = scaling_engine_db_scheme + "://" + scaling_engine_db_role['name'] + ":" + scaling_engine_db_role['password'] + "@" + scaling_engine_db_address + ":" + scaling_engine_db_port.to_s + "/" + scaling_engine_db_database['name'] + "?sslmode=" + p('autoscaler.scalingengine_db.sslmode') + "&sslrootcert=/var/vcap/jobs/scalingengine/config/certs/scalingengine_db/ca.crt"
+  scaling_engine_db_url = scaling_engine_db_scheme + "://" + scaling_engine_db_role['name'] + ":" + scaling_engine_db_role['password'] + "@" + scaling_engine_db_address + ":" + scaling_engine_db_port.to_s + "/" + scaling_engine_db_database['name'] + "?sslmode=" + p('autoscaler.scalingengine_db.sslmode') 
+  unless p('autoscaler.scalingengine_db.tls.ca') == ""
+    scaling_engine_db_url = scaling_engine_db_url + "&sslrootcert=/var/vcap/jobs/scalingengine/config/certs/scalingengine_db/ca.crt"
+  end
 
 
   policy_db_scheme = p('autoscaler.policy_db.db_scheme')
