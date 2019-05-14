@@ -26,10 +26,6 @@ packages:
   - metricsgateway
   - common
 
-consumes:
-- name: metricsserver
-  type: metricsserver
-
 properties:
   autoscaler.metricsgateway.logging.level:
     description: "the level of logging"
