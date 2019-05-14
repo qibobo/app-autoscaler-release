@@ -13,9 +13,9 @@
     policy_db_url = policy_db_url + "&sslrootcert=/var/vcap/jobs/metricsgateway/config/certs/policy_db/ca.crt"
   end
 
-  metricsserver_sorted_instances=link("metricsserver").instances.sort_by {|i|i.address}
-  metricsserver_addrs=metricsserver_sorted_instances.map{|i| "'wss://#{i.address}:#{link("metricsserver").p('autoscaler.metricsserver.collector.port')}'"}
-  metricsserver_nodeAddrs="[" + metricsserver_addrs.join(",") +"]"  
+  # metricsserver_sorted_instances=link("metricsserver").instances.sort_by {|i|i.address}
+  # metricsserver_addrs=metricsserver_sorted_instances.map{|i| "'wss://#{i.address}:#{link("metricsserver").p('autoscaler.metricsserver.collector.port')}'"}
+  metricsserver_nodeAddrs="[127.0.0.1:9999,127.0.0.1:9998,127.0.0.1:9997]"  
 
 %>
 
