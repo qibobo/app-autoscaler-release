@@ -91,7 +91,10 @@ bosh -e YOUR_ENV -d app-autoscaler \
      -v database_username=<database_username> \
      -v database_password=<database_password> \
      -v database_name=<database_name> \
-     -v database_sslmode=<database_sslmode> \
+     -v database_sslmode=<postgres_sslmode> \
+     -v postgres_ca=<postgres_ca_certificate> \
+     -v postgres_server_cert=<postgres_server_certificate> \
+     -v postgres_server_key=<postgres_server_private_key> \
      -o example/operation/external-db.yml
 ```
 >** Please refer to [Postgres SSL definition](https://www.postgresql.org/docs/current/libpq-ssl.html) when define `database_sslmode`.
