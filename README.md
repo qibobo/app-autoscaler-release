@@ -81,21 +81,37 @@ bosh -e YOUR_ENV -d app-autoscaler \
 bosh -e YOUR_ENV -d app-autoscaler \
      deploy templates/app-autoscaler-deployment.yml \
      --vars-store=bosh-lite/deployments/vars/autoscaler-deployment-vars.yml \
-     -l <PATH_TO_CF_DEPLOYMENT_VAR_FILES> \
+     -l <PATH_TO_CF_DEPLOYMENT_VAR_FILE> \
+     -l <PATH_TO_DATABASE_VAR_FILE> \
      -v system_domain=bosh-lite.com \
      -v cf_client_id=autoscaler_client_id \
      -v cf_client_secret=<AUTOSCALE_CLIENT_SECRET> \
      -v skip_ssl_validation=true \
-     -v database_host=<database_host> \
-     -v database_port=<database_port> \
-     -v database_username=<database_username> \
-     -v database_password=<database_password> \
-     -v database_name=<database_name> \
-     -v database_sslmode=<postgres_sslmode> \
-     -v postgres_ca=<postgres_ca_certificate> \
-     -v postgres_server_cert=<postgres_server_certificate> \
-     -v postgres_server_key=<postgres_server_private_key> \
      -o example/operation/external-db.yml
+```
+>** The DATABASE_VAR_FILE should look like as below
+```sh
+database:
+  name: <database_name>
+  host: <database_host>
+  port: <database_port>
+  username: <database_username>
+  password: <database_password>
+  sslmode: <database_sslmode>
+  tls:
+    ca: |
+      -----BEGIN CERTIFICATE-----
+           
+      -----END CERTIFICATE-----
+    certificate: |
+      -----BEGIN CERTIFICATE-----
+      
+      -----END CERTIFICATE-----
+    private_key: |
+      -----BEGIN RSA PRIVATE KEY-----
+      
+      -----END RSA PRIVATE KEY-----
+
 ```
 >** Please refer to [Postgres SSL definition](https://www.postgresql.org/docs/current/libpq-ssl.html) when define `database_sslmode`.
 
