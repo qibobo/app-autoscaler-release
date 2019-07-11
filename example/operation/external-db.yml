@@ -6,24 +6,24 @@
 - type: replace
   path: /instance_groups/name=asactors/jobs/name=scalingengine/properties/autoscaler/scalingengine_db
   value: &external_database
-    sslmode: &sslmode ((postgres_sslmode))
+    sslmode: &sslmode ((database.sslmode))
     tls: &database_tls
       ca: |
-        ((postgres_ca))
+        ((database.tls.ca))
       certificate: |
-        ((postgres_server_cert))
+        ((database.tls.certificate))
       private_key: |
-        ((postgres_server_key))
+        ((database.tls.private_key))
     databases:
-    - name: ((database_name))
+    - name: ((database.name))
       tag: default
-    address: ((database_host))
+    address: ((database.host))
     db_scheme: postgres
-    port: ((database_port))
-    sslmode: ((database_sslmode))
+    port: ((database.port))
+    sslmode: ((database.sslmode))
     roles:
-    - name: ((database_username))
-      password: ((database_password))
+    - name: ((database.username))
+      password: ((database.password))
       tag: default 
 
 - type: replace
